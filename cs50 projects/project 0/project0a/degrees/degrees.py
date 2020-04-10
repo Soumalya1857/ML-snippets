@@ -9,6 +9,7 @@ names = {}
 # Maps person_ids to a dictionary of: name, birth, movies (a set of movie_ids)
 people = {}
 
+
 # Maps movie_ids to a dictionary of: title, year, stars (a set of person_ids)
 movies = {}
 
@@ -62,10 +63,10 @@ def main():
     load_data(directory)
     print("Data loaded.")
 
-    source = person_id_for_name(input("Name: "))
+    source = person_id_for_name(input("Source Name: "))
     if source is None:
         sys.exit("Person not found.")
-    target = person_id_for_name(input("Name: "))
+    target = person_id_for_name(input("Target Name: "))
     if target is None:
         sys.exit("Person not found.")
 
@@ -84,16 +85,73 @@ def main():
             print(f"{i + 1}: {person1} and {person2} starred in {movie}")
 
 
+
 def shortest_path(source, target):
     """
     Returns the shortest list of (movie_id, person_id) pairs
     that connect the source to the target.
 
-    If no possible path, returns None.
+    If no possible path, returns None
+    for implementing the shortest distance we need to take the bfs approach
+    XDDDD.
     """
+    # queue = QueueFrontier()
+    # parent = {}
+    # path = []
+    # node = Node((None,source),None)
+    # queue.add(node);#queue containing all the person ids
+    # while queue.empty()!=True:
+    #     person = queue.remove()
+    #     if person.state[1] == target:
+    #         path = backtrace(parent,source,target)
+    #         return path
+    #     neighbour = neighbors_for_person(person.state[1])
+    #     for neigh in neighbour:
+    #         # if neigh not in queue:
+    #         flag = False
+            
+    #         if queue.contains_state(neigh):
+    #             flag = True
+    #         if flag == False:
+    #             parent[neigh] = person
+    #             queue.add(Node(neigh,person))
+                
+    #             # parent[neigh] = person
+    #             # queue.add(neigh)
 
+    # return path
+    # print("source: "+str(source))
+    # print("target: "+str(target))
+    neighbors = []
+    #neighbors.append([(0,source)])
+    #neighbors += [neighbors_for_person(source)]
+    for i in neighbors_for_person(source):
+        neighbors.append([i])
+    path = []
+    while neighbors:
+        path = neighbors.pop(0)
+        #print(path)
+        node = path[-1]
+        if node[1]==target:
+            return path
+            break
+        else:
+            #print(node[1])
+            temp = neighbors_for_person(node[1])
+            #print(temp)
+            for neigh in temp:
+                new_path = list(path)
+                flag = False
+                for i in new_path:
+                    if i[1]==neigh[1]:
+                        flag = True
+                
+                if flag == False:
+                    new_path.append(neigh)
+                    neighbors.append(new_path)
+        
     # TODO
-    raise NotImplementedError
+    #raise NotImplementedError
 
 
 def person_id_for_name(name):
@@ -132,7 +190,7 @@ def neighbors_for_person(person_id):
     for movie_id in movie_ids:
         for person_id in movies[movie_id]["stars"]:
             neighbors.add((movie_id, person_id))
-    return neighbors
+    return list(neighbors)
 
 
 if __name__ == "__main__":

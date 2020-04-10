@@ -1,8 +1,8 @@
 class Node():
-    def __init__(self, state, parent, action):
+    def __init__(self, state, parent):
         self.state = state
         self.parent = parent
-        self.action = action
+        #self.action = action
 
 
 class StackFrontier():
@@ -36,3 +36,17 @@ class QueueFrontier(StackFrontier):
             node = self.frontier[0]
             self.frontier = self.frontier[1:]
             return node
+
+
+
+"""
+# Maps names to a set of corresponding person_ids
+names = {}
+
+# Maps person_ids to a dictionary of: name, birth, movies (a set of movie_ids)
+people = {}
+
+
+# Maps movie_ids to a dictionary of: title, year, stars (a set of person_ids)
+movies = {}
+"""
