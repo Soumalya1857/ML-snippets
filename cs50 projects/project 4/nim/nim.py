@@ -267,8 +267,11 @@ def train(n):
                 )
 
     print("Done training")
+<<<<<<< HEAD
     with open("weights.txt","w+") as f:
         print(player.q, file = f)
+=======
+>>>>>>> 3b48b44a66a4e2aaa7f8fe2a2433b9212fd00839
 
     # Return the trained AI
     return player
