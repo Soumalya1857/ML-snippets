@@ -58,7 +58,32 @@ def load_data(data_dir):
     be a list of integer labels, representing the categories for each of the
     corresponding `images`.
     """
-    raise NotImplementedError
+    #raise NotImplementedError
+    images = []
+    #images = np.array(images)
+    labels = []
+
+    arr = os.walk(data_dir)
+    files = [x[0] for x in arr] #load all the data-directories name that is labels
+
+    for file in files:
+        # label = file
+        # temp = os.listdir(file)
+        # imgs = [x for x in temp]
+        # for img in imgs:
+        #     im = cv2.imread(img, mode = 'RGB')
+        #     images.add(im)
+        #     labels.add(label)
+        for root,dirnames,filenames in os.walk(file):
+            for filename in filenames:
+                filepath = os.path.join(root, filename)
+                image = cv2.imread(filepath, mode = "RGB")
+                image = np.reshape(image,(IMG_HEIGHT,IMG_WIDTH,3))
+                images.add(image)
+                labels.add(filename)
+        
+    return images,labels
+
 
 
 def get_model():
@@ -67,7 +92,32 @@ def get_model():
     `input_shape` of the first layer is `(IMG_WIDTH, IMG_HEIGHT, 3)`.
     The output layer should have `NUM_CATEGORIES` units, one for each category.
     """
-    raise NotImplementedError
+    #raise NotImplementedError
+    model = tf.keras.Sequential([
+        tf.keras.layers.Conv2D(
+            32,(3,3),padding = 'same',input_shape = (IMG_HEIGHT,IMG_WIDTH,3),activation = 'relu'
+        ),
+        tf.keras.layers.MaxPooling2D(pool_size = (2,2)),
+
+        tf.keras.layers.Flatten(),
+
+        tf.keras.layers.Dense(200,activation = 'relu'),
+        tf.keras.layers.Dropout(0.5),
+
+        tf.keras.layers.Dense(150,activation='relu'),
+        tf.keras.layers.Dropout(0.4),
+
+        tf.keras.layers.Dense(10,activation='softmax')
+    ])
+
+    model.compile(
+        optimizer = "adam",
+        loss = "categorical_crossentropy",
+        metrics = ["accuracy"]
+    )
+
+    return model;
+    
 
 
 if __name__ == "__main__":
