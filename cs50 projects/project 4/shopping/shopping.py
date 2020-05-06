@@ -87,7 +87,7 @@ def load_data(filename):
                             temp.append(3)
                         if row[i] == 'May':
                             temp.append(4)
-                        if row[i] == 'Jun':
+                        if row[i] == 'June':
                             temp.append(5)
                         if row[i] == 'July':
                             temp.append(6)
