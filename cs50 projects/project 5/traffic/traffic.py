@@ -6,7 +6,7 @@ import tensorflow as tf
 
 from sklearn.model_selection import train_test_split
 
-EPOCHS = 10
+EPOCHS = 20
 IMG_WIDTH = 30
 IMG_HEIGHT = 30
 NUM_CATEGORIES = 43
@@ -21,8 +21,9 @@ def main():
 
     # Get image arrays and labels for all image files
     images, labels = load_data(sys.argv[1])
+    print("data loaded successfully")
 
-    # Split data into training and testing sets
+    #Split data into training and testing sets
     labels = tf.keras.utils.to_categorical(labels)
     x_train, x_test, y_train, y_test = train_test_split(
         np.array(images), np.array(labels), test_size=TEST_SIZE
@@ -62,6 +63,7 @@ def load_data(data_dir):
     images = []
     #images = np.array(images)
     labels = []
+    flag = False
 
     arr = os.walk(data_dir)
     files = [x[0] for x in arr] #load all the data-directories name that is labels
@@ -74,14 +76,23 @@ def load_data(data_dir):
         #     im = cv2.imread(img, mode = 'RGB')
         #     images.add(im)
         #     labels.add(label)
-        for root,dirnames,filenames in os.walk(file):
-            for filename in filenames:
-                filepath = os.path.join(root, filename)
-                image = cv2.imread(filepath, mode = "RGB")
-                image = np.reshape(image,(IMG_HEIGHT,IMG_WIDTH,3))
-                images.add(image)
-                labels.add(filename)
-        
+        #print(file)
+        if flag == False:#we need to discard the first iteration
+            flag = True
+        else:
+
+            for root,dirnames,filenames in os.walk(file):
+                for filename in filenames:
+                    filepath = os.path.join(root, filename)
+                    image = cv2.imread(filepath)
+                    #print(filepath)
+                    image = cv2.resize(image,(IMG_HEIGHT,IMG_WIDTH),)
+                    images.append(image)
+                    labels.append(file[6:])
+                    #print(filename)
+
+    # print(len(labels))
+    # print(len(images))
     return images,labels
 
 
@@ -95,21 +106,60 @@ def get_model():
     #raise NotImplementedError
     model = tf.keras.Sequential([
         tf.keras.layers.Conv2D(
+            64,(3,3),padding = 'same',input_shape = (IMG_HEIGHT,IMG_WIDTH,3),activation = 'relu'
+        ),
+        tf.keras.layers.MaxPooling2D(pool_size = (2,2)),
+
+        tf.keras.layers.Conv2D(
             32,(3,3),padding = 'same',input_shape = (IMG_HEIGHT,IMG_WIDTH,3),activation = 'relu'
         ),
         tf.keras.layers.MaxPooling2D(pool_size = (2,2)),
 
         tf.keras.layers.Flatten(),
 
-        tf.keras.layers.Dense(200,activation = 'relu'),
+        tf.keras.layers.Dense(400,activation = 'relu'),
         tf.keras.layers.Dropout(0.5),
 
-        tf.keras.layers.Dense(150,activation='relu'),
+        tf.keras.layers.Dense(200,activation = 'relu'),
         tf.keras.layers.Dropout(0.4),
 
-        tf.keras.layers.Dense(10,activation='softmax')
+        tf.keras.layers.Dense(150,activation='relu'),
+        tf.keras.layers.Dropout(0.3),
+
+        tf.keras.layers.Dense(43,activation='softmax')
     ])
 
+    # model = tf.keras.Sequential([
+
+    #     # tf.keras.layers.Conv2D(
+    #     #     64,(3,3),padding = 'same',input_shape = (IMG_HEIGHT,IMG_WIDTH,3)
+    #     # ),
+    #     # tf.keras.layers.BatchNormalization(scale = False, center = True),
+    #     # tf.keras.layers.Activation('relu'),#thats for batch normalization method
+
+    #     # tf.keras.layers.MaxPooling2D(pool_size = (2,2)),
+        
+    #     tf.keras.layers.Conv2D(
+    #         32,(3,3),padding = 'same',input_shape = (IMG_HEIGHT,IMG_WIDTH,3)
+    #     ),
+    #     tf.keras.layers.BatchNormalization(scale = False, center = True),
+    #     tf.keras.layers.Activation('relu'),#thats for batch normalization method
+
+    #     tf.keras.layers.MaxPooling2D(pool_size = (2,2)),
+
+    #     tf.keras.layers.Flatten(),
+
+    #     tf.keras.layers.Dense(400,activation = 'relu'),
+    #     tf.keras.layers.Dropout(0.5),
+
+    #     tf.keras.layers.Dense(200,activation = 'relu'),
+    #     tf.keras.layers.Dropout(0.5),
+
+    #     tf.keras.layers.Dense(100,activation='relu'),
+    #     tf.keras.layers.Dropout(0.4),
+
+    #     tf.keras.layers.Dense(43,activation='softmax')
+    # ])
     model.compile(
         optimizer = "adam",
         loss = "categorical_crossentropy",
