@@ -106,24 +106,32 @@ def get_model():
     #raise NotImplementedError
     model = tf.keras.Sequential([
         tf.keras.layers.Conv2D(
-            64,(3,3),padding = 'same',input_shape = (IMG_HEIGHT,IMG_WIDTH,3),activation = 'relu'
+            40,(3,3),padding = 'same',input_shape = (IMG_HEIGHT,IMG_WIDTH,3),activation = 'relu'
         ),
         tf.keras.layers.MaxPooling2D(pool_size = (2,2)),
 
         tf.keras.layers.Conv2D(
-            32,(3,3),padding = 'same',input_shape = (IMG_HEIGHT,IMG_WIDTH,3),activation = 'relu'
+            20,(3,3),padding = 'same',input_shape = (IMG_HEIGHT,IMG_WIDTH,3),activation = 'relu'
+        ),
+        tf.keras.layers.MaxPooling2D(pool_size = (2,2)),
+
+        tf.keras.layers.Conv2D(
+            10,(3,3),padding = 'same',input_shape = (IMG_HEIGHT,IMG_WIDTH,3),activation = 'relu'
         ),
         tf.keras.layers.MaxPooling2D(pool_size = (2,2)),
 
         tf.keras.layers.Flatten(),
 
-        tf.keras.layers.Dense(400,activation = 'relu'),
+        # tf.keras.layers.Dense(600,activation='relu'),
+        # tf.keras.layers.Dropout(0.5),
+
+        tf.keras.layers.Dense(500,activation = 'relu'),
         tf.keras.layers.Dropout(0.5),
 
-        tf.keras.layers.Dense(200,activation = 'relu'),
+        tf.keras.layers.Dense(250,activation = 'relu'),
         tf.keras.layers.Dropout(0.4),
 
-        tf.keras.layers.Dense(150,activation='relu'),
+        tf.keras.layers.Dense(125,activation='relu'),
         tf.keras.layers.Dropout(0.3),
 
         tf.keras.layers.Dense(43,activation='softmax')
